@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fitjob — Resultados</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <style>
+    .results-layout {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 100px 24px 80px;
+    }
+
+    /* ── Encabezado oferta ── */
+    .results-job-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .results-job-title {
+      font-size: 1.6rem; font-weight: 800;
+      color: #fff; margin-bottom: 6px;
+    }
+    .results-job-company {
+      font-size: 1rem; color: rgba(255,255,255,0.5);
+    }
+
+    /* ── Score circular ── */
+    .score-card {
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 40px;
+      display: flex;
+      align-items: center;
+      gap: 48px;
+      margin-bottom: 24px;
+    }
+    .score-circle-wrap {
+      flex-shrink: 0;
+      position: relative;
+      width: 160px; height: 160px;
+    }
+    .score-circle-wrap svg {
+      transform: rotate(-90deg);
+      width: 160px; height: 160px;
+    }
+    .score-track { fill: none; stroke: #2a2a2a; stroke-width: 12; }
+    .score-fill  { fill: none; stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset 1.2s ease; }
+    .score-center {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .score-number {
+      font-size: 2.4rem; font-weight: 900;
+      line-height: 1;
+    }
+    .score-label {
+      font-size: 0.7rem; font-weight: 600;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-top: 4px;
+    }
+    .score-text { flex: 1; }
+    .score-text-title {
+      font-size: 1rem; font-weight: 700;
+      color: #fff; margin-bottom: 12px;
+    }
+    .score-justificacion {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.7;
+    }
+
+    /* ── Columnas puntos fuertes / gaps ── */
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .analysis-card {
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 28px;
+    }
+    .analysis-card-title {
+      font-size: 0.8rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 18px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .analysis-card-title.strengths { color: #3B82F6; }
+    .analysis-card-title.gaps { color: #F59E0B; }
+    .analysis-list { list-style: none; padding: 0; margin: 0; }
+    .analysis-list li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 0.875rem; color: rgba(255,255,255,0.75);
+      line-height: 1.55; margin-bottom: 12px;
+    }
+    .analysis-list li:last-child { margin-bottom: 0; }
+    .analysis-list li .icon { flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Carta preview ── */
+    .carta-card {
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+    .carta-card-title {
+      font-size: 0.8rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .carta-preview {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.7;
+      max-height: 180px;
+      overflow: hidden;
+      position: relative;
+    }
+    .carta-preview.expanded { max-height: none; }
+    .carta-fade {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 60px;
+      background: linear-gradient(transparent, #1a1a1a);
+    }
+    .carta-expand-btn {
+      background: none; border: none;
+      color: #3B82F6; font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; padding: 8px 0 0; display: block;
+    }
+
+    /* ── Descargas ── */
+    .downloads-card {
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+    .downloads-title {
+      font-size: 0.8rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 20px;
+    }
+    .downloads-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .download-btn {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 10px; padding: 20px 16px;
+      background: #3B82F6; color: #fff;
+      border: none; border-radius: 12px;
+      font-size: 0.8rem; font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      text-align: center;
+    }
+    .download-btn:hover { background: #2563EB; transform: translateY(-2px); }
+    .download-btn svg { width: 22px; height: 22px; }
+    .download-btn-label { line-height: 1.3; }
+
+    /* ── Email ── */
+    .email-card {
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 32px;
+    }
+    .email-title {
+      font-size: 0.8rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 8px;
+    }
+    .email-subtitle {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 16px;
+    }
+    .email-row {
+      display: flex; gap: 12px;
+    }
+    .email-input {
+      flex: 1;
+    }
+    .email-feedback {
+      font-size: 0.825rem;
+      margin-top: 10px;
+      display: none;
+    }
+    .email-feedback.ok { color: #4ade80; display: block; }
+    .email-feedback.err { color: #EF4444; display: block; }
+
+    /* ── Analizar otra oferta ── */
+    .new-offer-btn {
+      width: 100%; padding: 16px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.9rem; font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .new-offer-btn:hover {
+      border-color: #3B82F6;
+      color: #3B82F6;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar-inner">
+    <a href="/" class="navbar-logo">Fitjob</a>
+    <button class="btn-ghost" id="btn-history" onclick="window.location.href='/history'" style="font-size:0.82rem;">
+      Mis ofertas
+    </button>
+    <div></div>
+  </nav>
+
+  <main class="results-layout" id="results-main" style="display:none">
+
+    <div class="results-job-header">
+      <div class="results-job-title" id="job-title">Cargando…</div>
+      <div class="results-job-company" id="job-company"></div>
+    </div>
+
+    <!-- Score -->
+    <div class="score-card">
+      <div class="score-circle-wrap">
+        <svg viewBox="0 0 160 160">
+          <circle class="score-track" cx="80" cy="80" r="68"/>
+          <circle class="score-fill" id="score-arc" cx="80" cy="80" r="68"
+            stroke-dasharray="427.26"
+            stroke-dashoffset="427.26"
+          />
+        </svg>
+        <div class="score-center">
+          <span class="score-number" id="score-number">0%</span>
+          <span class="score-label">Encaje</span>
+        </div>
+      </div>
+      <div class="score-text">
+        <div class="score-text-title">Análisis de compatibilidad</div>
+        <div class="score-justificacion" id="score-justificacion"></div>
+      </div>
+    </div>
+
+    <!-- Puntos fuertes y gaps -->
+    <div class="analysis-grid">
+      <div class="analysis-card">
+        <div class="analysis-card-title strengths">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Puntos fuertes
+        </div>
+        <ul class="analysis-list" id="strengths-list"></ul>
+      </div>
+      <div class="analysis-card">
+        <div class="analysis-card-title gaps">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Áreas de mejora
+        </div>
+        <ul class="analysis-list" id="gaps-list"></ul>
+      </div>
+    </div>
+
+    <!-- Carta preview -->
+    <div class="carta-card">
+      <div class="carta-card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Carta de presentación
+      </div>
+      <div class="carta-preview" id="carta-preview">
+        <div id="carta-text"></div>
+        <div class="carta-fade" id="carta-fade"></div>
+      </div>
+      <button class="carta-expand-btn" id="carta-expand-btn" onclick="toggleCarta()">Ver carta completa ↓</button>
+    </div>
+
+    <!-- Descargas -->
+    <div class="downloads-card">
+      <div class="downloads-title">Descarga tus documentos</div>
+      <div class="downloads-grid">
+        <a class="download-btn" id="dl-cv" href="#" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+          <span class="download-btn-label">CV Adaptado</span>
+        </a>
+        <a class="download-btn" id="dl-carta" href="#" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span class="download-btn-label">Carta Completa</span>
+        </a>
+        <a class="download-btn" id="dl-carta-corta" href="#" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          <span class="download-btn-label">Carta Corta<br><small style="font-weight:400;opacity:.8">(para formularios)</small></span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="email-card">
+      <div class="email-title">Recibir por email</div>
+      <p class="email-subtitle">Introduce tu email y te enviamos los tres documentos adjuntos.</p>
+      <div class="email-row">
+        <input type="email" class="form-input email-input" id="email-input" placeholder="tu@email.com">
+        <button class="btn-primary" onclick="enviarEmail()">Enviar</button>
+      </div>
+      <div class="email-feedback" id="email-feedback"></div>
+    </div>
+
+    <!-- Nueva oferta -->
+    <button class="new-offer-btn" onclick="analizarOtra()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Analizar otra oferta
+    </button>
+
+  </main>
+
+  <!-- Estado de carga -->
+  <div id="loading-state" style="min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+    <div class="spinner"></div>
+    <p style="color:rgba(255,255,255,0.4);font-size:0.9rem;">Cargando resultados…</p>
+  </div>
+
+  <script src="/static/js/results.js"></script>
+</body>
+</html>

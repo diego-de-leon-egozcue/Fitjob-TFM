@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fitjob — Tu perfil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar-inner">
+    <a href="/" class="navbar-logo">Fitjob</a>
+    <div class="navbar-steps">
+      <div class="nav-step active" id="nav-step-1">
+        <span class="nav-step-dot"></span> CV
+      </div>
+      <div class="nav-step-line"></div>
+      <div class="nav-step" id="nav-step-2">
+        <span class="nav-step-dot"></span> Perfil
+      </div>
+      <div class="nav-step-line"></div>
+      <div class="nav-step" id="nav-step-3">
+        <span class="nav-step-dot"></span> Oferta
+      </div>
+    </div>
+    <button class="btn-ghost" onclick="window.location.href='/history'" style="font-size:0.82rem;">Mis ofertas</button>
+  </nav>
+
+  <main class="onboarding-main">
+
+    <!-- ═══ PASO 1: Subir CV ═══ -->
+    <section class="ob-step" id="step-1">
+      <div class="ob-card">
+        <div class="ob-header">
+          <div class="ob-step-badge">Paso 1 de 3</div>
+          <h1 class="ob-title">Sube tu CV</h1>
+          <p class="ob-subtitle">
+            Tu CV se usa únicamente para analizar el encaje con la oferta y generar los documentos.
+            <strong>No se guarda en ningún servidor</strong> ni se usa para ningún otro fin.
+          </p>
+        </div>
+
+        <div class="upload-area" id="upload-area" onclick="document.getElementById('cv-input').click()">
+          <input type="file" id="cv-input" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="handleFileSelect(this)">
+          <div class="upload-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.5">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="12" y1="18" x2="12" y2="12"/>
+              <polyline points="9 15 12 12 15 15"/>
+            </svg>
+          </div>
+          <p class="upload-text">Haz clic o arrastra tu CV aquí</p>
+          <p class="upload-hint">PDF, Word (.docx) o TXT · Máximo 10 MB</p>
+        </div>
+
+        <div class="upload-success" id="upload-success" style="display:none">
+          <div class="upload-success-icon">✓</div>
+          <div>
+            <div class="upload-success-name" id="upload-filename"></div>
+            <div class="upload-success-sub">CV cargado correctamente</div>
+          </div>
+          <button class="upload-change-btn" onclick="resetUpload()">Cambiar</button>
+        </div>
+
+        <div class="ob-error" id="upload-error" style="display:none"></div>
+
+        <div class="ob-footer">
+          <div></div>
+          <button class="btn-primary" id="btn-step1" onclick="irPaso2()" disabled>
+            Continuar
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PASO 2: Perfil ═══ -->
+    <section class="ob-step" id="step-2" style="display:none">
+      <div class="ob-card ob-card-wide">
+        <div class="ob-header">
+          <div class="ob-step-badge">Paso 2 de 3</div>
+          <h1 class="ob-title">Cuéntanos qué buscas</h1>
+          <p class="ob-subtitle">Estas respuestas permiten al sistema analizar si la oferta encaja realmente con lo que quieres.</p>
+        </div>
+
+        <form id="profile-form">
+
+          <!-- P1: Sectores -->
+          <div class="form-group">
+            <label class="form-label">¿En qué sectores te gustaría trabajar? <span class="form-hint">(Elige todos los que quieras)</span></label>
+            <div class="chips-group" id="chips-sectores">
+              <button type="button" class="chip" data-value="Tecnología">Tecnología</button>
+              <button type="button" class="chip" data-value="Marketing">Marketing</button>
+              <button type="button" class="chip" data-value="Consultoría">Consultoría</button>
+              <button type="button" class="chip" data-value="Banca y finanzas">Banca y finanzas</button>
+              <button type="button" class="chip" data-value="Moda y lujo">Moda y lujo</button>
+              <button type="button" class="chip" data-value="Cosmética y belleza">Cosmética y belleza</button>
+              <button type="button" class="chip" data-value="Deporte">Deporte</button>
+              <button type="button" class="chip" data-value="Educación">Educación</button>
+              <button type="button" class="chip" data-value="Salud">Salud</button>
+              <button type="button" class="chip" data-value="Entretenimiento">Entretenimiento</button>
+              <button type="button" class="chip" data-value="Otro">Otro</button>
+            </div>
+            <input type="text" class="form-input" id="otro-sectores" placeholder="¿Qué sector?" style="display:none;margin-top:10px;">
+          </div>
+
+          <!-- P2: Modalidad -->
+          <div class="form-group">
+            <label class="form-label">¿Qué modalidad de trabajo buscas?</label>
+            <div class="chips-group single" id="chips-modalidad">
+              <button type="button" class="chip" data-value="Solo presencial">Solo presencial</button>
+              <button type="button" class="chip" data-value="Preferiblemente presencial">Preferiblemente presencial</button>
+              <button type="button" class="chip" data-value="Híbrido">Híbrido</button>
+              <button type="button" class="chip" data-value="Preferiblemente remoto">Preferiblemente remoto</button>
+              <button type="button" class="chip" data-value="Solo remoto">Solo remoto</button>
+            </div>
+          </div>
+
+          <!-- P3: Ciudades -->
+          <div class="form-group">
+            <label class="form-label">¿En qué ciudades estarías dispuesto/a a trabajar?</label>
+            <input type="text" class="form-input" id="input-ciudades" placeholder="Ej: Barcelona, Madrid, Valencia…" autocomplete="off">
+          </div>
+
+          <!-- P4: Salario -->
+          <div class="form-group">
+            <label class="form-label">¿Cuál es el salario bruto anual mínimo que aceptarías?</label>
+            <div class="salary-row">
+              <input type="number" class="form-input salary-input" id="input-salario" placeholder="Ej: 22000" min="0" step="500">
+              <select class="form-select" id="select-moneda">
+                <option value="EUR">€ EUR</option>
+                <option value="USD">$ USD</option>
+                <option value="GBP">£ GBP</option>
+              </select>
+            </div>
+            <p class="form-sublabel">En bruto anual. Deja en 0 si el salario no es un factor decisivo.</p>
+          </div>
+
+          <!-- P5: Tipo empresa -->
+          <div class="form-group">
+            <label class="form-label">¿Qué tipo de empresa te atrae más? <span class="form-hint">(Puedes seleccionar varias)</span></label>
+            <div class="chips-group" id="chips-tipo-empresa">
+              <button type="button" class="chip" data-value="Startup">Startup</button>
+              <button type="button" class="chip" data-value="Pyme">Pyme</button>
+              <button type="button" class="chip" data-value="Empresa mediana">Empresa mediana</button>
+              <button type="button" class="chip" data-value="Multinacional">Multinacional</button>
+              <button type="button" class="chip" data-value="Agencia">Agencia</button>
+              <button type="button" class="chip" data-value="Consultora">Consultora</button>
+              <button type="button" class="chip" data-value="Institución pública">Institución pública</button>
+              <button type="button" class="chip" data-value="Sin preferencia">Sin preferencia</button>
+              <button type="button" class="chip" data-value="Otro">Otro</button>
+            </div>
+            <input type="text" class="form-input" id="otro-tipo-empresa" placeholder="¿Qué tipo de empresa?" style="display:none;margin-top:10px;">
+          </div>
+
+          <!-- P6: Nivel responsabilidad -->
+          <div class="form-group">
+            <label class="form-label">¿Qué nivel de responsabilidad buscas?</label>
+            <div class="chips-group single" id="chips-nivel">
+              <button type="button" class="chip" data-value="Prácticas o primer empleo">Prácticas o primer empleo</button>
+              <button type="button" class="chip" data-value="Posición junior">Posición junior</button>
+              <button type="button" class="chip" data-value="Posición senior">Posición senior</button>
+              <button type="button" class="chip" data-value="Rol de liderazgo o gestión">Rol de liderazgo o gestión</button>
+            </div>
+          </div>
+
+          <!-- P7: Prioridades -->
+          <div class="form-group">
+            <label class="form-label">¿Qué es lo más importante para ti en un trabajo?</label>
+            <div class="chips-group" id="chips-prioridades">
+              <button type="button" class="chip" data-value="Salario">Salario</button>
+              <button type="button" class="chip" data-value="Flexibilidad horaria">Flexibilidad horaria</button>
+              <button type="button" class="chip" data-value="Trabajo en remoto">Trabajo en remoto</button>
+              <button type="button" class="chip" data-value="Crecimiento profesional">Crecimiento profesional</button>
+              <button type="button" class="chip" data-value="Ambiente de equipo">Ambiente de equipo</button>
+              <button type="button" class="chip" data-value="Propósito o impacto">Propósito o impacto</button>
+              <button type="button" class="chip" data-value="Estabilidad">Estabilidad</button>
+              <button type="button" class="chip" data-value="Creatividad">Creatividad</button>
+              <button type="button" class="chip" data-value="Aprendizaje continuo">Aprendizaje continuo</button>
+              <button type="button" class="chip" data-value="Reconocimiento">Reconocimiento</button>
+              <button type="button" class="chip" data-value="Otro">Otro</button>
+            </div>
+            <input type="text" class="form-input" id="otro-prioridades" placeholder="¿Qué más valoras?" style="display:none;margin-top:10px;">
+          </div>
+
+          <!-- P8: Rechazos -->
+          <div class="form-group">
+            <label class="form-label">¿Qué condiciones rechazarías aunque todo lo demás encajara?</label>
+            <div class="chips-group" id="chips-rechazos">
+              <button type="button" class="chip" data-value="Solo presencial sin flexibilidad">Solo presencial sin flexibilidad</button>
+              <button type="button" class="chip" data-value="Salario por debajo de mi mínimo">Salario por debajo de mi mínimo</button>
+              <button type="button" class="chip" data-value="Empresa sin cultura de feedback">Empresa sin cultura de feedback</button>
+              <button type="button" class="chip" data-value="Viajes frecuentes no pactados">Viajes frecuentes no pactados</button>
+              <button type="button" class="chip" data-value="Sin posibilidad de crecimiento">Sin posibilidad de crecimiento</button>
+              <button type="button" class="chip" data-value="Sector que no me motiva">Sector que no me motiva</button>
+              <button type="button" class="chip" data-value="Otro">Otro</button>
+            </div>
+            <input type="text" class="form-input" id="otro-rechazos" placeholder="¿Qué condición rechazarías?" style="display:none;margin-top:10px;">
+          </div>
+
+          <!-- P9: Momento carrera -->
+          <div class="form-group">
+            <label class="form-label">¿En qué momento de tu carrera estás?</label>
+            <div class="chips-group single" id="chips-momento">
+              <button type="button" class="chip" data-value="Buscando mi primer empleo">Buscando mi primer empleo</button>
+              <button type="button" class="chip" data-value="Cambiando de sector">Cambiando de sector</button>
+              <button type="button" class="chip" data-value="Creciendo dentro de mi sector">Creciendo dentro de mi sector</button>
+              <button type="button" class="chip" data-value="Volviendo al mercado laboral">Volviendo al mercado laboral</button>
+              <button type="button" class="chip" data-value="Buscando cambio después de mucho tiempo en la misma empresa">Buscando un cambio tras mucho tiempo en la misma empresa</button>
+              <button type="button" class="chip" data-value="Otro">Otro</button>
+            </div>
+            <input type="text" class="form-input" id="otro-momento" placeholder="Describe tu situación actual…" style="display:none;margin-top:10px;">
+          </div>
+
+          <!-- P10: Notas -->
+          <div class="form-group">
+            <label class="form-label">¿Hay algo más que el asistente deba saber? <span class="form-hint">(Opcional)</span></label>
+            <textarea class="form-textarea" id="input-notas" placeholder="Cuéntanos cualquier cosa relevante sobre lo que buscas o lo que es importante para ti…" rows="3"></textarea>
+          </div>
+
+        </form>
+
+        <div class="ob-error" id="profile-error" style="display:none"></div>
+
+        <div class="ob-footer">
+          <button class="btn-ghost" onclick="irPaso1()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Volver
+          </button>
+          <button class="btn-primary" onclick="irPaso3()">
+            Continuar
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PASO 3: Oferta ═══ -->
+    <section class="ob-step" id="step-3" style="display:none">
+      <div class="ob-card ob-card-wide">
+        <div class="ob-header">
+          <div class="ob-step-badge">Paso 3 de 3</div>
+          <h1 class="ob-title">Pega la oferta</h1>
+          <p class="ob-subtitle">
+            Copia y pega el contenido completo de la oferta que te interesa: título, empresa, descripción, requisitos y condiciones.
+            <strong>Cuanto más completa sea la oferta, mejor será el análisis.</strong>
+          </p>
+        </div>
+
+        <!-- Límites de caracteres -->
+        <div class="form-group">
+          <label class="form-label">Límite de caracteres de la oferta <span class="form-hint">(Opcional)</span></label>
+          <p class="form-sublabel">Si la oferta indica un máximo de caracteres para la carta, escríbelo aquí. Deja en 0 o vacío si no hay límite.</p>
+          <div class="char-limits-row">
+            <div class="char-limit-field">
+              <label class="char-limit-label">Carta completa</label>
+              <input type="number" class="form-input char-limit-input" id="limite-carta-larga" min="0" placeholder="Sin límite (0)">
+            </div>
+            <div class="char-limit-field">
+              <label class="char-limit-label">Carta corta (formulario)</label>
+              <input type="number" class="form-input char-limit-input" id="limite-carta-corta" min="0" placeholder="Sin límite (0)">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <textarea
+            class="form-textarea offer-textarea"
+            id="input-oferta"
+            placeholder="Pega aquí el texto completo de la oferta de trabajo…&#10;&#10;Ejemplo:&#10;Empresa X busca un/a Marketing Manager para…&#10;&#10;Responsabilidades:&#10;— …&#10;&#10;Requisitos:&#10;— …"
+            rows="14"
+          ></textarea>
+          <div class="offer-chars" id="offer-chars">0 caracteres</div>
+        </div>
+
+        <div class="ob-error" id="offer-error" style="display:none"></div>
+
+        <div class="ob-footer">
+          <button class="btn-ghost" onclick="irPaso2()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Volver
+          </button>
+          <button class="btn-primary" onclick="analizarOferta()">
+            Analizar oferta
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="/static/js/onboarding.js"></script>
+</body>
+</html>

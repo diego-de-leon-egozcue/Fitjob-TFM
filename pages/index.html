@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fitjob — Encuentra el trabajo que realmente encaja contigo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <style>
+    body { background: #0a0a0a; }
+
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 60px;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .navbar-logo {
+      font-size: 1.5rem; font-weight: 800;
+      color: #3B82F6; letter-spacing: -0.5px;
+      text-decoration: none;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 120px 60px 80px;
+      gap: 60px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-left {
+      flex: 1;
+      max-width: 580px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Ocupa toda la mitad derecha hasta el borde de la pantalla */
+    .hero-right {
+      flex: 1;
+      position: relative;
+      align-self: stretch;
+      margin-right: -60px;
+      overflow: hidden;
+      min-height: 600px;
+    }
+
+    /* Foto a sangre, cubre el área */
+    .hero-photo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+    }
+
+    /* Gradiente sobre la foto: izquierda (negro → transparente) + oscurece top y bottom */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg,
+          #0a0a0a 0%,
+          rgba(10,10,10,0.65) 28%,
+          rgba(10,10,10,0.15) 58%,
+          transparent 80%
+        ),
+        linear-gradient(180deg,
+          rgba(10,10,10,0.45) 0%,
+          transparent 20%,
+          transparent 72%,
+          rgba(10,10,10,0.6) 100%
+        );
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* SVG de análisis IA: centrado horizontalmente, zona inferior del hero */
+    .hero-mini-svg {
+      position: absolute;
+      bottom: 48px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 360px;
+      opacity: 0.93;
+      filter: drop-shadow(0 24px 56px rgba(0,0,0,0.85));
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.25);
+      color: #3B82F6; border-radius: 100px;
+      padding: 6px 16px; font-size: 0.8rem; font-weight: 600;
+      margin-bottom: 28px; letter-spacing: 0.03em;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: #3B82F6; border-radius: 50%;
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero-title {
+      font-size: clamp(2.6rem, 5vw, 3.8rem);
+      font-weight: 900; line-height: 1.1;
+      color: #fff; letter-spacing: -1.5px;
+      margin-bottom: 20px;
+    }
+    .hero-title span { color: #3B82F6; }
+
+    .hero-line {
+      width: 56px; height: 3px;
+      background: #3B82F6; border-radius: 2px;
+      margin-bottom: 24px;
+    }
+
+    .hero-tagline {
+      font-size: 1.1rem; color: rgba(255,255,255,0.65);
+      line-height: 1.7; margin-bottom: 44px;
+      max-width: 460px;
+    }
+
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #3B82F6; color: #fff;
+      padding: 16px 36px; border-radius: 10px;
+      font-size: 1rem; font-weight: 700;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      cursor: pointer; border: none;
+    }
+    .hero-cta:hover { background: #2563EB; transform: translateY(-2px); }
+    .hero-cta svg { width: 18px; height: 18px; }
+
+    /* ── Sección pasos ── */
+    .steps-section {
+      padding: 80px 60px 100px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .steps-label {
+      text-align: center;
+      font-size: 0.8rem; font-weight: 600;
+      color: #3B82F6; letter-spacing: 0.12em;
+      text-transform: uppercase; margin-bottom: 14px;
+    }
+    .steps-title {
+      text-align: center;
+      font-size: 1.9rem; font-weight: 800;
+      color: #fff; letter-spacing: -0.5px;
+      margin-bottom: 60px;
+    }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px; max-width: 860px; margin: 0 auto;
+    }
+    .step-card {
+      background: #111;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px; padding: 36px 28px;
+      text-align: center;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .step-card:hover {
+      border-color: rgba(59,130,246,0.35);
+      transform: translateY(-4px);
+    }
+    .step-number {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px;
+      background: rgba(59,130,246,0.12); color: #3B82F6;
+      border-radius: 10px; font-size: 1rem; font-weight: 800;
+      margin-bottom: 20px;
+    }
+    .step-icon { font-size: 2rem; margin-bottom: 16px; display: block; }
+    .step-name { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
+    .step-desc { font-size: 0.875rem; color: rgba(255,255,255,0.5); line-height: 1.6; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="/" class="navbar-logo">Fitjob</a>
+    <button class="btn-ghost" onclick="window.location.href='/history'" style="font-size:0.82rem;">Mis ofertas</button>
+    <button class="btn-primary" onclick="empezar()">Empezar</button>
+  </nav>
+
+  <section class="hero">
+
+    <div class="hero-left">
+      <div class="hero-badge">Asistente de empleo con IA</div>
+      <h1 class="hero-title">
+        Encuentra el trabajo<br>que <span>realmente</span><br>encaja contigo
+      </h1>
+      <div class="hero-line"></div>
+      <p class="hero-tagline">
+        Sube tu CV, pega la oferta que te interesa y deja que la IA analice el encaje real,
+        adapte tu candidatura y genere los documentos listos para enviar.
+      </p>
+      <button class="hero-cta" onclick="empezar()">
+        Empezar ahora
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="hero-right">
+      <!-- Foto de entrevista a sangre -->
+      <img class="hero-photo" src="/static/img/hero.jpg.webp" alt="Entrevista de trabajo">
+      <!-- Gradiente oscuro para legibilidad y coherencia de marca -->
+      <div class="hero-overlay"></div>
+
+    </div><!-- /hero-right -->
+
+    <!-- Ilustración IA: centrada en la zona inferior del hero, entre texto y foto -->
+    <svg class="hero-mini-svg" viewBox="0 0 420 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="210" cy="200" rx="160" ry="120" fill="rgba(59,130,246,0.06)"/>
+        <!-- Tarjeta CV -->
+        <rect x="80" y="60" width="180" height="230" rx="14" fill="#161b27" stroke="rgba(59,130,246,0.35)" stroke-width="1.5"/>
+        <rect x="80" y="60" width="180" height="42" rx="14" fill="rgba(59,130,246,0.18)"/>
+        <rect x="80" y="88" width="180" height="14" fill="rgba(59,130,246,0.18)"/>
+        <circle cx="112" cy="81" r="14" fill="#1e2840"/>
+        <circle cx="112" cy="76" r="6" fill="#3B82F6" opacity="0.7"/>
+        <path d="M100 90 Q112 84 124 90" stroke="#3B82F6" stroke-width="1.5" fill="none" opacity="0.7"/>
+        <rect x="132" y="71" width="80" height="7" rx="3.5" fill="rgba(255,255,255,0.55)"/>
+        <rect x="132" y="82" width="54" height="5" rx="2.5" fill="rgba(59,130,246,0.55)"/>
+        <rect x="96" y="114" width="50" height="5" rx="2.5" fill="rgba(255,255,255,0.2)"/>
+        <rect x="96" y="125" width="148" height="4" rx="2" fill="rgba(255,255,255,0.12)"/>
+        <rect x="96" y="133" width="120" height="4" rx="2" fill="rgba(255,255,255,0.12)"/>
+        <rect x="96" y="141" width="134" height="4" rx="2" fill="rgba(255,255,255,0.12)"/>
+        <rect x="96" y="158" width="50" height="5" rx="2.5" fill="rgba(255,255,255,0.2)"/>
+        <rect x="96" y="169" width="148" height="4" rx="2" fill="rgba(255,255,255,0.12)"/>
+        <rect x="96" y="177" width="100" height="4" rx="2" fill="rgba(255,255,255,0.12)"/>
+        <rect x="96" y="185" width="120" height="4" rx="2" fill="rgba(255,255,255,0.12)"/>
+        <rect x="96" y="200" width="50" height="5" rx="2.5" fill="rgba(255,255,255,0.2)"/>
+        <rect x="96" y="211" width="100" height="4" rx="2" fill="rgba(255,255,255,0.12)"/>
+        <rect x="96" y="219" width="80" height="4" rx="2" fill="rgba(255,255,255,0.12)"/>
+        <rect x="96" y="240" width="148" height="18" rx="6" fill="rgba(59,130,246,0.25)" stroke="rgba(59,130,246,0.5)" stroke-width="1"/>
+        <rect x="118" y="246" width="104" height="6" rx="3" fill="rgba(59,130,246,0.7)"/>
+        <!-- Tarjeta oferta -->
+        <rect x="220" y="110" width="160" height="140" rx="12" fill="#161b27" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+        <rect x="234" y="126" width="80" height="6" rx="3" fill="rgba(255,255,255,0.5)"/>
+        <rect x="234" y="136" width="54" height="5" rx="2.5" fill="rgba(59,130,246,0.6)"/>
+        <rect x="234" y="152" width="132" height="4" rx="2" fill="rgba(255,255,255,0.1)"/>
+        <rect x="234" y="160" width="110" height="4" rx="2" fill="rgba(255,255,255,0.1)"/>
+        <rect x="234" y="168" width="120" height="4" rx="2" fill="rgba(255,255,255,0.1)"/>
+        <rect x="234" y="180" width="132" height="4" rx="2" fill="rgba(255,255,255,0.1)"/>
+        <rect x="234" y="188" width="90" height="4" rx="2" fill="rgba(255,255,255,0.1)"/>
+        <rect x="234" y="204" width="72" height="22" rx="11" fill="rgba(59,130,246,0.2)" stroke="rgba(59,130,246,0.5)" stroke-width="1"/>
+        <text x="270" y="219" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="10" font-weight="700" fill="#3B82F6">82% match</text>
+        <path d="M200 180 Q215 170 220 175" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.6"/>
+        <!-- Nodo IA -->
+        <circle cx="210" cy="50" r="28" fill="#0f1623" stroke="rgba(59,130,246,0.5)" stroke-width="1.5"/>
+        <circle cx="210" cy="50" r="22" fill="rgba(59,130,246,0.1)"/>
+        <text x="210" y="44" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="9" font-weight="600" fill="rgba(255,255,255,0.5)">IA</text>
+        <text x="210" y="57" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="11" font-weight="700" fill="#3B82F6">✦</text>
+        <line x1="170" y1="70" x2="192" y2="50" stroke="rgba(59,130,246,0.3)" stroke-width="1" stroke-dasharray="3 3"/>
+        <line x1="250" y1="115" x2="228" y2="68" stroke="rgba(59,130,246,0.3)" stroke-width="1" stroke-dasharray="3 3"/>
+        <circle cx="340" cy="75" r="4" fill="rgba(59,130,246,0.4)"/>
+        <circle cx="355" cy="90" r="2.5" fill="rgba(59,130,246,0.25)"/>
+        <circle cx="70" cy="250" r="3" fill="rgba(59,130,246,0.3)"/>
+        <circle cx="58" cy="230" r="2" fill="rgba(59,130,246,0.2)"/>
+        <!-- Chips resultado -->
+        <rect x="98" y="304" width="76" height="22" rx="11" fill="#0f1623" stroke="rgba(74,222,128,0.4)" stroke-width="1"/>
+        <text x="136" y="319" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="9" fill="#4ade80">✓ CV adaptado</text>
+        <rect x="184" y="304" width="80" height="22" rx="11" fill="#0f1623" stroke="rgba(59,130,246,0.4)" stroke-width="1"/>
+        <text x="224" y="319" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="9" fill="#93c5fd">✉ Carta lista</text>
+      </svg>
+
+  </section>
+
+  <!-- Pasos -->
+  <section class="steps-section">
+    <p class="steps-label">Cómo funciona</p>
+    <h2 class="steps-title">Tres pasos, candidatura perfecta</h2>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <span class="step-icon">📄</span>
+        <div class="step-name">Sube tu CV</div>
+        <p class="step-desc">Sube tu CV en PDF. La IA extrae toda tu información automáticamente.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <span class="step-icon">📋</span>
+        <div class="step-name">Pega la oferta</div>
+        <p class="step-desc">Copia y pega el texto de cualquier oferta que te interese.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <span class="step-icon">✨</span>
+        <div class="step-name">Obtén tu propuesta</div>
+        <p class="step-desc">CV adaptado, carta personalizada y análisis de encaje en segundos.</p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    async function empezar() {
+      const res = await fetch('/api/session', { method: 'POST' });
+      if (res.ok) {
+        window.location.href = '/onboarding';
+      } else {
+        alert('Error al iniciar sesión. Recarga la página e inténtalo de nuevo.');
+      }
+    }
+  </script>
+</body>
+</html>

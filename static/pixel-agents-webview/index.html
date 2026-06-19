@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>webview-ui</title>
+    <script type="module" crossorigin src="./assets/index-BUrEakFE.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DD_JabCg.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    <style>
+      /* Ocultar controles del editor de la extensión — no necesarios en el embed */
+      button { display: none !important; }
+    </style>
+    <script>
+      // Relay: avisar al padre cuando el browserMock termine de cargar sprites
+      window.addEventListener('message', function(e) {
+        if (e.data && e.data.type === 'settingsLoaded' && e.data.extensionVersion) {
+          window.parent.postMessage({ type: 'webviewReady' }, '*');
+        }
+      });
+
+      // Ocultar popups y paneles de la extensión después de que React renderice
+      new MutationObserver(function(_, obs) {
+        // El canvas se añade cuando el scene está listo
+        if (!document.querySelector('canvas')) return;
+        obs.disconnect();
+        setTimeout(function() {
+          // Ocultar cualquier panel flotante (notificación "Updated to v1.3", etc.)
+          document.querySelectorAll('[class*="absolute"][class*="bottom"]').forEach(function(el) {
+            el.style.display = 'none';
+          });
+          document.querySelectorAll('[class*="absolute"][class*="top"]').forEach(function(el) {
+            // Solo ocultar los que no sean el canvas container
+            if (!el.querySelector('canvas')) el.style.display = 'none';
+          });
+        }, 200);
+      }).observe(document.getElementById('root'), { childList: true, subtree: true });
+    </script>
+  </body>
+</html>

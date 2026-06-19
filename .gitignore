@@ -1,0 +1,24 @@
+# Credenciales — nunca subir al repo
+.env
+
+# Archivos generados en sesión (PDFs temporales)
+tmp/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.Python
+
+# Editor
+.vscode/settings.json
+*.swp
+*.swo
+
+# Sistema operativo
+.DS_Store
+Thumbs.db

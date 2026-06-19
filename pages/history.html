@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fitjob — Mis ofertas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <style>
+    .history-layout {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 100px 24px 80px;
+    }
+    .history-header {
+      margin-bottom: 36px;
+    }
+    .history-title {
+      font-size: 1.8rem; font-weight: 800;
+      color: #fff; letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .history-subtitle {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .history-empty {
+      text-align: center;
+      padding: 80px 24px;
+      color: rgba(255,255,255,0.3);
+    }
+    .history-empty-icon { font-size: 3rem; margin-bottom: 16px; }
+    .history-empty-text { font-size: 0.95rem; margin-bottom: 24px; }
+
+    .history-list { display: flex; flex-direction: column; gap: 14px; }
+
+    .history-card {
+      background: #242424;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      transition: border-color 0.2s;
+    }
+    .history-card:hover { border-color: rgba(255,255,255,0.15); }
+
+    .history-score-badge {
+      flex-shrink: 0;
+      width: 58px; height: 58px;
+      border-radius: 14px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      font-weight: 800;
+    }
+    .history-score-badge .score-val {
+      font-size: 1.2rem; line-height: 1;
+    }
+    .history-score-badge .score-pct {
+      font-size: 0.65rem; opacity: 0.8;
+    }
+
+    .score-high { background: rgba(59,130,246,0.15); color: #3B82F6; }
+    .score-mid  { background: rgba(245,158,11,0.15); color: #F59E0B; }
+    .score-low  { background: rgba(239,68,68,0.15);  color: #EF4444; }
+
+    .history-info { flex: 1; min-width: 0; }
+    .history-job-title {
+      font-size: 0.95rem; font-weight: 700;
+      color: #fff; margin-bottom: 4px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .history-company {
+      font-size: 0.825rem;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 6px;
+    }
+    .history-timestamp {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.25);
+    }
+
+    .history-actions {
+      display: flex; flex-direction: column;
+      gap: 8px; flex-shrink: 0;
+    }
+    .history-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; border: none;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .history-btn-primary {
+      background: #3B82F6; color: #fff;
+    }
+    .history-btn-primary:hover { background: #2563EB; }
+    .history-btn-ghost {
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .history-btn-ghost:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar-inner">
+    <a href="/" class="navbar-logo">Fitjob</a>
+    <div style="font-size:0.85rem;color:rgba(255,255,255,0.4);">Mis ofertas analizadas</div>
+    <button class="btn-ghost" onclick="analizarOtra()">+ Nueva oferta</button>
+  </nav>
+
+  <main class="history-layout">
+    <div class="history-header">
+      <h1 class="history-title">Mis ofertas analizadas</h1>
+      <p class="history-subtitle">Ordenadas de mayor a menor encaje. El historial está disponible durante esta sesión.</p>
+    </div>
+
+    <!-- Estado vacío -->
+    <div class="history-empty" id="history-empty" style="display:none">
+      <div class="history-empty-icon">📭</div>
+      <p class="history-empty-text">Todavía no has analizado ninguna oferta en esta sesión.</p>
+      <button class="btn-primary" onclick="analizarOtra()">Analizar una oferta</button>
+    </div>
+
+    <!-- Lista -->
+    <div class="history-list" id="history-list"></div>
+
+  </main>
+
+  <script>
+    async function cargarHistorial() {
+      const res = await fetch('/api/history');
+      if (!res.ok) {
+        window.location.href = '/';
+        return;
+      }
+      const history = await res.json();
+
+      if (history.length === 0) {
+        document.getElementById('history-empty').style.display = 'block';
+        return;
+      }
+
+      const list = document.getElementById('history-list');
+      history.forEach(item => {
+        const scoreClass = item.score >= 70 ? 'score-high' : item.score >= 40 ? 'score-mid' : 'score-low';
+        const card = document.createElement('div');
+        card.className = 'history-card';
+        card.innerHTML = `
+          <div class="history-score-badge ${scoreClass}">
+            <span class="score-val">${item.score}</span>
+            <span class="score-pct">%</span>
+          </div>
+          <div class="history-info">
+            <div class="history-job-title">${esc(item.offer_title || 'Sin título')}</div>
+            <div class="history-company">${esc(item.offer_company || '')}</div>
+            <div class="history-timestamp">${esc(item.timestamp)}</div>
+          </div>
+          <div class="history-actions">
+            <button class="history-btn history-btn-primary" onclick="verResultados('${item.job_id}')">Ver informe</button>
+            <button class="history-btn history-btn-ghost" onclick="descargarCV('${item.job_id}')">Descargar CV</button>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function esc(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function verResultados(jobId) {
+      window.location.href = `/results?job_id=${jobId}`;
+    }
+
+    function descargarCV(jobId) {
+      window.open(`/api/download/cv/${jobId}`, '_blank');
+    }
+
+    function analizarOtra() {
+      window.location.href = '/onboarding';
+    }
+
+    cargarHistorial();
+  </script>
+</body>
+</html>
